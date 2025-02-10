@@ -46,6 +46,17 @@ public class AreaRepository implements BaseRepository<Area, String> {
         }
     }
 
+    public Optional<Area> findByName(String name) {
+        try {
+            Area result = entityManager.createQuery("FROM Area WHERE name = :name AND deletedAt IS NOT NULL", Area.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+            return Optional.ofNullable(result);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     @Override
     @Transactional
     public List<Area> saveAll(List<Area> body) {

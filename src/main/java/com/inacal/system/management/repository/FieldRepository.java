@@ -47,6 +47,17 @@ public class FieldRepository implements BaseRepository<Field, String> {
         }
     }
 
+    public Optional<Field> findByName(String name) {
+        try {
+            Field result = entityManager.createQuery("FROM Field WHERE name = :name AND deletedAt IS NOT NULL", Field.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+            return Optional.ofNullable(result);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     @Override
     @Transactional
     public List<Field> saveAll(List<Field> body) {

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class DateTypeRepository implements BaseRepository<DataType, String> {
+public class DataTypeRepository implements BaseRepository<DataType, String> {
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -34,6 +34,17 @@ public class DateTypeRepository implements BaseRepository<DataType, String> {
         try {
             DataType result = entityManager.createQuery("FROM DataType WHERE id = :id", DataType.class)
                     .setParameter("id", id)
+                    .getSingleResult();
+            return Optional.ofNullable(result);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<DataType> findByName(String name) {
+        try {
+            DataType result = entityManager.createQuery("FROM DataType WHERE name = :name", DataType.class)
+                    .setParameter("name", name)
                     .getSingleResult();
             return Optional.ofNullable(result);
         } catch (NoResultException e) {

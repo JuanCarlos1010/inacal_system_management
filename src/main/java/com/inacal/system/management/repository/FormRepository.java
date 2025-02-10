@@ -46,6 +46,17 @@ public class FormRepository implements BaseRepository<Form, String> {
         }
     }
 
+    public Optional<Form> findByName(String name) {
+        try {
+            Form result = entityManager.createQuery("FROM Form WHERE name = :name AND deletedAt IS NOT NULL", Form.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+            return Optional.ofNullable(result);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     @Override
     @Transactional
     public List<Form> saveAll(List<Form> body) {

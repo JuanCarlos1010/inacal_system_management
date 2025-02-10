@@ -4,7 +4,7 @@ import com.inacal.management.db.BaseRepository;
 import com.inacal.management.model.PageResponse;
 import com.inacal.management.model.Pagination;
 import com.inacal.management.time.DateTimeHelper;
-import com.inacal.system.management.entity.Product;
+import com.inacal.system.management.entity.ProductGroup;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -15,19 +15,19 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class ProductRepository implements BaseRepository<Product, String> {
+public class ProductGroupRepository implements BaseRepository<ProductGroup, String> {
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     @Transactional
-    public Product save(Product body) {
+    public ProductGroup save(ProductGroup body) {
         return entityManager.merge(body);
     }
 
     @Override
     public boolean delete(List<String> ids) {
-        int result = entityManager.createQuery("UPDATE FROM Product SET deletedAt = :now WHERE id IN (:id)")
+        int result = entityManager.createQuery("UPDATE FROM ProductGroup SET deletedAt = :now WHERE id IN (:id)")
                 .setParameter("id", ids)
                 .setParameter("now", DateTimeHelper.now())
                 .executeUpdate();
@@ -35,10 +35,21 @@ public class ProductRepository implements BaseRepository<Product, String> {
     }
 
     @Override
-    public Optional<Product> findById(String id) {
+    public Optional<ProductGroup> findById(String id) {
         try {
-            Product result = entityManager.createQuery("FROM Product WHERE id = :id AND deletedAt IS NOT NULL", Product.class)
+            ProductGroup result = entityManager.createQuery("FROM ProductGroup WHERE id = :id AND deletedAt IS NOT NULL", ProductGroup.class)
                     .setParameter("id", id)
+                    .getSingleResult();
+            return Optional.ofNullable(result);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<ProductGroup> findByName(String name) {
+        try {
+            ProductGroup result = entityManager.createQuery("FROM ProductGroup WHERE name = :name AND deletedAt IS NOT NULL", ProductGroup.class)
+                    .setParameter("name", name)
                     .getSingleResult();
             return Optional.ofNullable(result);
         } catch (NoResultException e) {
@@ -48,10 +59,10 @@ public class ProductRepository implements BaseRepository<Product, String> {
 
     @Override
     @Transactional
-    public List<Product> saveAll(List<Product> body) {
-        List<Product> result = new ArrayList<>();
+    public List<ProductGroup> saveAll(List<ProductGroup> body) {
+        List<ProductGroup> result = new ArrayList<>();
         for ( int index = 0; index < body.size(); index++ ) {
-            Product saved = entityManager.merge(body.get(index));
+            ProductGroup saved = entityManager.merge(body.get(index));
             result.add(saved);
             if (index % 5 == 0) {
                 entityManager.flush();
@@ -62,12 +73,12 @@ public class ProductRepository implements BaseRepository<Product, String> {
     }
 
     @Override
-    public PageResponse<Product> findAll(Pagination pagination) {
-        List<Product> result = entityManager.createQuery("FROM Product WHERE deletedAt IS NULL", Product.class)
+    public PageResponse<ProductGroup> findAll(Pagination pagination) {
+        List<ProductGroup> result = entityManager.createQuery("FROM ProductGroup WHERE deletedAt IS NULL", ProductGroup.class)
                 .setFirstResult(pagination.offset())
                 .setMaxResults(pagination.getSize())
                 .getResultList();
-        long count = entityManager.createQuery("FROM Product WHERE deletedAt IS NULL", Long.class)
+        long count = entityManager.createQuery("FROM ProductGroup WHERE deletedAt IS NULL", Long.class)
                 .getSingleResult();
         return new PageResponse<>(count, result, pagination);
     }

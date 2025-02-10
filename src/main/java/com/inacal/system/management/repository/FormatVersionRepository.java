@@ -46,6 +46,17 @@ public class FormatVersionRepository implements BaseRepository<FormatVersion, St
         }
     }
 
+    public Optional<FormatVersion> findByTitle(String title) {
+        try {
+            FormatVersion result = entityManager.createQuery("FROM FormatVersion WHERE title = :title AND deletedAt IS NOT NULL", FormatVersion.class)
+                    .setParameter("title", title)
+                    .getSingleResult();
+            return Optional.ofNullable(result);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     @Override
     @Transactional
     public List<FormatVersion> saveAll(List<FormatVersion> body) {

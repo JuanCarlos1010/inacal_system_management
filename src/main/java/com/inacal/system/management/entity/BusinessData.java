@@ -1,8 +1,10 @@
 package com.inacal.system.management.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "business_data")
 public class BusinessData {

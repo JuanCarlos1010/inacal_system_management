@@ -46,6 +46,17 @@ public class LaboratoryRepository implements BaseRepository<Laboratory, String> 
         }
     }
 
+    public Optional<Laboratory> findByName(String name) {
+        try {
+            Laboratory result = entityManager.createQuery("FROM Laboratory WHERE name = :name AND deletedAt IS NOT NULL", Laboratory.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+            return Optional.ofNullable(result);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     @Override
     @Transactional
     public List<Laboratory> saveAll(List<Laboratory> body) {

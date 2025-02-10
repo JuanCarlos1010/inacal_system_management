@@ -1,10 +1,11 @@
 package com.inacal.system.management.entity;
 
 import jakarta.persistence.*;
-
+import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+@Data
 @Entity
 @Table(name = "revision_records")
 public class RevisionRecord {

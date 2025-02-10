@@ -1,9 +1,11 @@
 package com.inacal.system.management.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+@Data
 @Entity
 @Table(name = "format_versions")
 public class FormatVersion {

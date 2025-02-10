@@ -46,6 +46,17 @@ public class FormGroupRepository implements BaseRepository<FormGroup, String> {
         }
     }
 
+    public Optional<FormGroup> findByName(String name) {
+        try {
+            FormGroup result = entityManager.createQuery("FROM FormGroup WHERE name = :name AND deletedAt IS NOT NULL", FormGroup.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+            return Optional.ofNullable(result);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     @Override
     @Transactional
     public List<FormGroup> saveAll(List<FormGroup> body) {

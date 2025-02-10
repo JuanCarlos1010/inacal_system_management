@@ -46,6 +46,17 @@ public class BusinessDataRepository implements BaseRepository<BusinessData, Stri
         }
     }
 
+    public Optional<BusinessData> findByName(String name) {
+        try {
+            BusinessData result = entityManager.createQuery("FROM BusinessData WHERE name = :name AND deletedAt IS NOT NULL", BusinessData.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+            return Optional.ofNullable(result);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     @Override
     @Transactional
     public List<BusinessData> saveAll(List<BusinessData> body) {

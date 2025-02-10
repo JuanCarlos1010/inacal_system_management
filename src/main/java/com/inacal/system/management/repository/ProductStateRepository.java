@@ -46,6 +46,17 @@ public class ProductStateRepository implements BaseRepository<ProductState, Stri
         }
     }
 
+    public Optional<ProductState> findByName(String name) {
+        try {
+            ProductState result = entityManager.createQuery("FROM ProductState WHERE name = :name AND deletedAt IS NOT NULL", ProductState.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+            return Optional.ofNullable(result);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     @Override
     @Transactional
     public List<ProductState> saveAll(List<ProductState> body) {
