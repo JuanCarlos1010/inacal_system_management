@@ -1,18 +1,18 @@
 package com.inacal.system.management.repository;
 
-import com.inacal.management.db.BaseRepository;
-import com.inacal.management.model.PageResponse;
-import com.inacal.management.model.Pagination;
-import com.inacal.management.time.DateTimeHelper;
-import com.inacal.system.management.entity.FormGroup;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Repository;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import com.inacal.management.model.Pagination;
+import com.inacal.management.db.BaseRepository;
+import com.inacal.management.model.PageResponse;
+import org.springframework.stereotype.Repository;
+import com.inacal.management.time.DateTimeHelper;
+import com.inacal.system.management.entity.FormGroup;
 
 @Repository
 public class FormGroupRepository implements BaseRepository<FormGroup, String> {

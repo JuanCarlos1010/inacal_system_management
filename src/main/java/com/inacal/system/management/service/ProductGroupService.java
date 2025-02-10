@@ -1,16 +1,16 @@
 package com.inacal.system.management.service;
 
-import com.inacal.management.exception.BadRequestException;
-import com.inacal.management.exception.InternalServerException;
-import com.inacal.management.exception.NotFoundException;
-import com.inacal.management.model.PageResponse;
+import java.util.Optional;
 import com.inacal.management.model.Pagination;
+import org.springframework.stereotype.Service;
+import com.inacal.management.model.PageResponse;
 import com.inacal.management.time.DateTimeHelper;
 import com.inacal.system.management.entity.FormGroup;
 import com.inacal.system.management.entity.ProductGroup;
+import com.inacal.management.exception.NotFoundException;
+import com.inacal.management.exception.BadRequestException;
+import com.inacal.management.exception.InternalServerException;
 import com.inacal.system.management.repository.ProductGroupRepository;
-import org.springframework.stereotype.Service;
-import java.util.Optional;
 
 @Service
 public class ProductGroupService {
@@ -20,7 +20,7 @@ public class ProductGroupService {
         this.productGroupRepository = productGroupRepository;
     }
 
-    PageResponse<ProductGroup> findAllProductGroups(Pagination pagination) {
+    public PageResponse<ProductGroup> findAllProductGroups(Pagination pagination) {
         try {
             return productGroupRepository.findAll(pagination);
         } catch (Exception e) {

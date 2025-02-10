@@ -1,12 +1,12 @@
 package com.inacal.system.management.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "form_group")
+@Table(name = "form_groups")
 public class FormGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

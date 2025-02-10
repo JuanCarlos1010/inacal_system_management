@@ -1,15 +1,15 @@
 package com.inacal.system.management.service;
 
-import com.inacal.management.exception.BadRequestException;
-import com.inacal.management.exception.InternalServerException;
-import com.inacal.management.exception.NotFoundException;
-import com.inacal.management.model.PageResponse;
-import com.inacal.management.model.Pagination;
-import com.inacal.management.time.DateTimeHelper;
-import com.inacal.system.management.entity.Area;
-import com.inacal.system.management.repository.AreaRepository;
-import org.springframework.stereotype.Service;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
+import com.inacal.management.model.Pagination;
+import com.inacal.management.model.PageResponse;
+import com.inacal.system.management.entity.Area;
+import com.inacal.management.time.DateTimeHelper;
+import com.inacal.management.exception.NotFoundException;
+import com.inacal.management.exception.InternalServerException;
+import com.inacal.management.exception.BadRequestException;
+import com.inacal.system.management.repository.AreaRepository;
 
 @Service
 public class AreaService {
@@ -19,7 +19,7 @@ public class AreaService {
         this.areaRepository = areaRepository;
     }
 
-    PageResponse<Area> findAllAreas(Pagination pagination) {
+    public PageResponse<Area> findAllAreas(Pagination pagination) {
         try {
             return areaRepository.findAll(pagination);
         } catch (Exception e) {

@@ -1,16 +1,16 @@
 package com.inacal.system.management.service;
 
-import com.inacal.management.exception.BadRequestException;
-import com.inacal.management.exception.InternalServerException;
-import com.inacal.management.exception.NotFoundException;
-import com.inacal.management.model.PageResponse;
-import com.inacal.management.model.Pagination;
-import com.inacal.management.time.DateTimeHelper;
-import com.inacal.system.management.entity.RegistrationDate;
-import com.inacal.system.management.entity.RevisionRecord;
-import com.inacal.system.management.repository.RevisionRecordRepository;
-import org.springframework.stereotype.Service;
 import java.util.Date;
+import org.springframework.stereotype.Service;
+import com.inacal.management.model.Pagination;
+import com.inacal.management.model.PageResponse;
+import com.inacal.management.time.DateTimeHelper;
+import com.inacal.management.exception.NotFoundException;
+import com.inacal.system.management.entity.RevisionRecord;
+import com.inacal.management.exception.BadRequestException;
+import com.inacal.system.management.entity.RegistrationDate;
+import com.inacal.management.exception.InternalServerException;
+import com.inacal.system.management.repository.RevisionRecordRepository;
 
 @Service
 public class RevisionRecordService {
@@ -20,7 +20,7 @@ public class RevisionRecordService {
         this.revisionRecordRepository = revisionRecordRepository;
     }
 
-    PageResponse<RevisionRecord> findAllRevisionRecords(Pagination pagination) {
+    public PageResponse<RevisionRecord> findAllRevisionRecords(Pagination pagination) {
         try {
             return revisionRecordRepository.findAll(pagination);
         } catch (Exception e) {

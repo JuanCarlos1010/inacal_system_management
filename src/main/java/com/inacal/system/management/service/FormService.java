@@ -1,15 +1,15 @@
 package com.inacal.system.management.service;
 
-import com.inacal.management.exception.BadRequestException;
-import com.inacal.management.exception.InternalServerException;
-import com.inacal.management.exception.NotFoundException;
-import com.inacal.management.model.PageResponse;
-import com.inacal.management.model.Pagination;
-import com.inacal.management.time.DateTimeHelper;
-import com.inacal.system.management.entity.Form;
-import com.inacal.system.management.repository.FormRepository;
-import org.springframework.stereotype.Service;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
+import com.inacal.management.model.Pagination;
+import com.inacal.system.management.entity.Form;
+import com.inacal.management.model.PageResponse;
+import com.inacal.management.time.DateTimeHelper;
+import com.inacal.management.exception.NotFoundException;
+import com.inacal.management.exception.BadRequestException;
+import com.inacal.system.management.repository.FormRepository;
+import com.inacal.management.exception.InternalServerException;
 
 @Service
 public class FormService {
@@ -19,7 +19,7 @@ public class FormService {
         this.formRepository = formRepository;
     }
 
-    PageResponse<Form> findAllForms(Pagination pagination) {
+    public PageResponse<Form> findAllForms(Pagination pagination) {
         try {
             return formRepository.findAll(pagination);
         } catch (Exception e) {

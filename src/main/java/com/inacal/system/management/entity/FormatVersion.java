@@ -1,9 +1,9 @@
 package com.inacal.system.management.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
-import java.time.LocalDateTime;
 import java.util.Date;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @Entity

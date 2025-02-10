@@ -1,14 +1,14 @@
 package com.inacal.system.management.service;
 
+import java.util.Optional;
+import com.inacal.management.model.Pagination;
+import org.springframework.stereotype.Service;
+import com.inacal.management.model.PageResponse;
+import com.inacal.system.management.entity.DataType;
+import com.inacal.management.exception.NotFoundException;
 import com.inacal.management.exception.BadRequestException;
 import com.inacal.management.exception.InternalServerException;
-import com.inacal.management.exception.NotFoundException;
-import com.inacal.management.model.PageResponse;
-import com.inacal.management.model.Pagination;
-import com.inacal.system.management.entity.DataType;
 import com.inacal.system.management.repository.DataTypeRepository;
-import org.springframework.stereotype.Service;
-import java.util.Optional;
 
 @Service
 public class DataTypeService {
@@ -18,7 +18,7 @@ public class DataTypeService {
         this.dataTypeRepository = dataTypeRepository;
     }
 
-    PageResponse<DataType> findAllDataTypes(Pagination pagination) {
+    public PageResponse<DataType> findAllDataTypes(Pagination pagination) {
         try {
             return dataTypeRepository.findAll(pagination);
         } catch (Exception e) {

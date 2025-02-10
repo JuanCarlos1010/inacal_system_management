@@ -1,7 +1,7 @@
 package com.inacal.system.management.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
