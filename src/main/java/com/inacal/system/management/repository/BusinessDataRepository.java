@@ -3,6 +3,7 @@ package com.inacal.system.management.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.persistence.NoResultException;
@@ -10,7 +11,6 @@ import jakarta.persistence.PersistenceContext;
 import com.inacal.management.model.Pagination;
 import com.inacal.management.db.BaseRepository;
 import com.inacal.management.model.PageResponse;
-import com.inacal.management.time.DateTimeHelper;
 import org.springframework.stereotype.Repository;
 import com.inacal.system.management.entity.BusinessData;
 
@@ -29,7 +29,7 @@ public class BusinessDataRepository implements BaseRepository<BusinessData, Stri
     public boolean delete(List<String> ids) {
         int result = entityManager.createQuery("UPDATE FROM BusinessData SET deletedAt = :now WHERE id IN (:id)")
                 .setParameter("id", ids)
-                .setParameter("now", DateTimeHelper.now())
+                .setParameter("now", LocalDateTime.now())
                 .executeUpdate();
         return result > 0;
     }
@@ -37,7 +37,7 @@ public class BusinessDataRepository implements BaseRepository<BusinessData, Stri
     @Override
     public Optional<BusinessData> findById(String id) {
         try {
-            BusinessData result = entityManager.createQuery("FROM BusinessData WHERE id = :id AND deletedAt IS NOT NULL", BusinessData.class)
+            BusinessData result = entityManager.createQuery("FROM BusinessData WHERE id = :id AND deletedAt IS NULL", BusinessData.class)
                     .setParameter("id", id)
                     .getSingleResult();
             return Optional.ofNullable(result);
@@ -48,7 +48,7 @@ public class BusinessDataRepository implements BaseRepository<BusinessData, Stri
 
     public Optional<BusinessData> findByName(String name) {
         try {
-            BusinessData result = entityManager.createQuery("FROM BusinessData WHERE name = :name AND deletedAt IS NOT NULL", BusinessData.class)
+            BusinessData result = entityManager.createQuery("FROM BusinessData WHERE name = :name AND deletedAt IS NULL", BusinessData.class)
                     .setParameter("name", name)
                     .getSingleResult();
             return Optional.ofNullable(result);
@@ -74,11 +74,11 @@ public class BusinessDataRepository implements BaseRepository<BusinessData, Stri
 
     @Override
     public PageResponse<BusinessData> findAll(Pagination pagination) {
-        List<BusinessData> result = entityManager.createQuery("FROM BusinessData WHERE deletedAt IS NULL", BusinessData.class)
+        List<BusinessData> result = entityManager.createQuery("FROM BusinessData WHERE deletedAt IS NULL ORDER BY createdAt ASC", BusinessData.class)
                 .setFirstResult(pagination.offset())
                 .setMaxResults(pagination.getSize())
                 .getResultList();
-        long count = entityManager.createQuery("FROM BusinessData WHERE deletedAt IS NULL", Long.class)
+        long count = entityManager.createQuery("SELECT COUNT (id) FROM BusinessData WHERE deletedAt IS NULL ORDER BY createdAt ASC", Long.class)
                 .getSingleResult();
         return new PageResponse<>(count, result, pagination);
     }

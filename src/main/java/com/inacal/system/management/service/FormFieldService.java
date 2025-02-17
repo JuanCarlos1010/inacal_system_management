@@ -1,5 +1,6 @@
 package com.inacal.system.management.service;
 
+import java.time.LocalDateTime;
 import com.inacal.management.model.Pagination;
 import org.springframework.stereotype.Service;
 import com.inacal.system.management.entity.Form;
@@ -48,6 +49,7 @@ public class FormFieldService {
             }
             body.setForm(form);
             body.setField(field);
+            body.setCreatedAt(LocalDateTime.now());
             return formFieldRepository.save(body);
         } catch (BadRequestException e) {
             throw e;
@@ -59,6 +61,7 @@ public class FormFieldService {
     public boolean deleteFormField(String id) {
         try {
             FormField formField = findFormFieldById(id);
+            formField.setDeletedAt(LocalDateTime.now());
             formFieldRepository.save(formField);
             return true;
         } catch (Exception e) {

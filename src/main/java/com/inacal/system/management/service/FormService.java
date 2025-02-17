@@ -1,13 +1,14 @@
 package com.inacal.system.management.service;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import com.inacal.management.model.Pagination;
 import com.inacal.system.management.entity.Form;
 import com.inacal.management.model.PageResponse;
-import com.inacal.management.time.DateTimeHelper;
 import com.inacal.management.exception.NotFoundException;
 import com.inacal.management.exception.BadRequestException;
+import com.inacal.system.management.validator.FormValidator;
 import com.inacal.system.management.repository.FormRepository;
 import com.inacal.management.exception.InternalServerException;
 
@@ -41,11 +42,12 @@ public class FormService {
     public Form saveForm(Form body) {
         try {
             body.setId(null);
+            FormValidator.validate(body);
             Optional<Form> existingForm = formRepository.findByName(body.getName());
             if (existingForm.isPresent()) {
                     throw new BadRequestException("Form name already exists");
             }
-            body.setCreatedAt(DateTimeHelper.now());
+            body.setCreatedAt(LocalDateTime.now());
             return formRepository.save(body);
         } catch (BadRequestException e) {
             throw e;
@@ -56,12 +58,12 @@ public class FormService {
 
     public Form updateForm(Form body) {
         try {
-            body.setId(null);
+            FormValidator.validate(body);
             return formRepository.findById(body.getId())
                     .map( form -> {
                         form.setName(body.getName());
-                        form.setUpdatedAt(DateTimeHelper.now());
-                        return formRepository.save(body);
+                        form.setUpdatedAt(LocalDateTime.now());
+                        return formRepository.save(form);
                     })
                     .orElseThrow(() -> new NotFoundException("Form id does not exist"));
         } catch (BadRequestException | NotFoundException e) {
@@ -74,7 +76,7 @@ public class FormService {
     public boolean deleteForm(String id) {
         try {
             Form form = findFormById(id);
-            form.setDeletedAt(DateTimeHelper.now());
+            form.setDeletedAt(LocalDateTime.now());
             formRepository.save(form);
             return true;
         } catch (Exception e) {

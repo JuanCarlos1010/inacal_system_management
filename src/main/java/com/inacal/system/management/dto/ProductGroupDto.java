@@ -1,12 +1,13 @@
 package com.inacal.system.management.dto;
 
 import lombok.Data;
+import lombok.Builder;
 import java.time.LocalDateTime;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import com.inacal.system.management.entity.FormGroup;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductGroupDto {
@@ -14,5 +15,6 @@ public class ProductGroupDto {
     private String name;
     private String systemName;
     private LocalDateTime createdAt;
-    private FormGroup formGroup;
+    private String formGroupId;
+    private String formGroupName;
 }

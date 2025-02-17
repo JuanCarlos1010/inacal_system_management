@@ -1,11 +1,20 @@
 package com.inacal.system.management.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
+import lombok.Builder;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "fields")
 public class Field {
     @Id
@@ -18,8 +27,9 @@ public class Field {
     @Column(name = "system_name")
     private String systemName;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "json")
-    private String properties;
+    private JsonNode properties;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -33,4 +43,8 @@ public class Field {
     @OneToOne
     @JoinColumn(name = "business_data_id")
     private BusinessData businessData;
+
+    public Field(String id) {
+        this.id = id;
+    }
 }

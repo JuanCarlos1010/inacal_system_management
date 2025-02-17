@@ -1,11 +1,17 @@
 package com.inacal.system.management.entity;
 
 import lombok.Data;
+import lombok.Builder;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "product_groups")
 public class ProductGroup {
     @Id
@@ -28,5 +34,5 @@ public class ProductGroup {
 
     @OneToOne
     @JoinColumn(name = "form_group_id")
-    private  FormGroup formGroup;
+    private FormGroup formGroup;
 }

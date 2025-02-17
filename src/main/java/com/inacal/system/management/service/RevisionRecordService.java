@@ -1,15 +1,15 @@
 package com.inacal.system.management.service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import com.inacal.management.model.Pagination;
 import com.inacal.management.model.PageResponse;
-import com.inacal.management.time.DateTimeHelper;
 import com.inacal.management.exception.NotFoundException;
 import com.inacal.system.management.entity.RevisionRecord;
+import com.inacal.system.management.entity.InternalVersion;
 import com.inacal.management.exception.BadRequestException;
-import com.inacal.system.management.entity.RegistrationDate;
 import com.inacal.management.exception.InternalServerException;
+import com.inacal.system.management.validator.RevisionRecordValidator;
 import com.inacal.system.management.repository.RevisionRecordRepository;
 
 @Service
@@ -42,12 +42,13 @@ public class RevisionRecordService {
     public RevisionRecord saveRevisionRecord(RevisionRecord body) {
         try {
             body.setId(null);
-            RegistrationDate registrationDate = body.getRegistrationDate();
-            if (registrationDate == null) {
-                throw new BadRequestException("RegistrationDate is required");
+            RevisionRecordValidator.validate(body);
+            InternalVersion internalVersion = body.getInternalVersion();
+            if (internalVersion == null) {
+                throw new BadRequestException("InternalVersion is required");
             }
-            body.setRegistrationDate(registrationDate);
-            body.setCreatedAt(DateTimeHelper.now());
+            body.setInternalVersion(internalVersion);
+            body.setCreatedAt(LocalDateTime.now());
             return revisionRecordRepository.save(body);
         } catch (BadRequestException e) {
             throw e;
@@ -58,18 +59,17 @@ public class RevisionRecordService {
 
     public RevisionRecord updateRevisionRecord(RevisionRecord body) {
         try {
-            body.setId(null);
+            RevisionRecordValidator.validate(body);
             return revisionRecordRepository.findById(body.getId())
                     .map( revisionRecord -> {
-                        revisionRecord.setLastUpdate(new Date());
                         revisionRecord.setPreparedBy(body.getPreparedBy());
                         revisionRecord.setPreparedPosition(body.getPreparedPosition());
                         revisionRecord.setReviewedBy(body.getReviewedBy());
                         revisionRecord.setReviewedPosition(body.getReviewedPosition());
-                        revisionRecord.setApprovedBy(revisionRecord.getApprovedBy());
-                        revisionRecord.setApprovedPosition(revisionRecord.getApprovedPosition());
-                        revisionRecord.setUpdatedAt(DateTimeHelper.now());
-                        return revisionRecordRepository.save(body);
+                        revisionRecord.setApprovedBy(body.getApprovedBy());
+                        revisionRecord.setApprovedPosition(body.getApprovedPosition());
+                        revisionRecord.setUpdatedAt(LocalDateTime.now());
+                        return revisionRecordRepository.save(revisionRecord);
                     })
                     .orElseThrow(() -> new NotFoundException("RevisionRecord id does not exist"));
         } catch (BadRequestException | NotFoundException e) {
@@ -82,7 +82,7 @@ public class RevisionRecordService {
     public boolean deleteRevisionRecord(String id) {
         try {
             RevisionRecord revisionRecord = findRevisionRecordById(id);
-            revisionRecord.setDeletedAt(DateTimeHelper.now());
+            revisionRecord.setDeletedAt(LocalDateTime.now());
             revisionRecordRepository.save(revisionRecord);
             return true;
         } catch (Exception e) {

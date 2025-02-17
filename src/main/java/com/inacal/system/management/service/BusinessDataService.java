@@ -1,15 +1,16 @@
 package com.inacal.system.management.service;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import com.inacal.management.model.Pagination;
 import com.inacal.management.model.PageResponse;
-import com.inacal.management.time.DateTimeHelper;
 import com.inacal.system.management.entity.DataType;
 import com.inacal.system.management.entity.BusinessData;
 import com.inacal.management.exception.NotFoundException;
 import com.inacal.management.exception.BadRequestException;
 import com.inacal.management.exception.InternalServerException;
+import com.inacal.system.management.validator.BusinessDataValidator;
 import com.inacal.system.management.repository.BusinessDataRepository;
 
 @Service
@@ -42,6 +43,7 @@ public class BusinessDataService {
     public BusinessData saveBusinessData(BusinessData body) {
         try {
             body.setId(null);
+            BusinessDataValidator.validate(body);
             DataType dataType = body.getDataType();
             if (dataType == null) {
                 throw new BadRequestException("DataType is required");
@@ -52,7 +54,7 @@ public class BusinessDataService {
                 }
             }
             body.setDataType(dataType);
-            body.setCreatedAt(DateTimeHelper.now());
+            body.setCreatedAt(LocalDateTime.now());
             return businessDataRepository.save(body);
         } catch (BadRequestException e) {
             throw e;
@@ -63,13 +65,13 @@ public class BusinessDataService {
 
     public BusinessData updateBusinessData(BusinessData body) {
         try {
-            body.setId(null);
+            BusinessDataValidator.validate(body);
             return businessDataRepository.findById(body.getId())
                     .map( businessData -> {
                         businessData.setName(body.getName());
                         businessData.setSystemName(body.getSystemName());
-                        businessData.setUpdatedAt(DateTimeHelper.now());
-                        return businessDataRepository.save(body);
+                        businessData.setUpdatedAt(LocalDateTime.now());
+                        return businessDataRepository.save(businessData);
                     })
                     .orElseThrow(() -> new NotFoundException("BusinessData id does not exist"));
         } catch (BadRequestException | NotFoundException e) {
@@ -82,7 +84,7 @@ public class BusinessDataService {
     public boolean deleteBusinessData(String id) {
         try {
             BusinessData businessData = findBusinessDataById(id);
-            businessData.setDeletedAt(DateTimeHelper.now());
+            businessData.setDeletedAt(LocalDateTime.now());
             businessDataRepository.save(businessData);
             return true;
         } catch (Exception e) {

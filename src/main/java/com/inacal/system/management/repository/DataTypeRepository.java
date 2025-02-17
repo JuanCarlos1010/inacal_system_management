@@ -69,11 +69,11 @@ public class DataTypeRepository implements BaseRepository<DataType, String> {
 
     @Override
     public PageResponse<DataType> findAll(Pagination pagination) {
-        List<DataType> result = entityManager.createQuery("FROM DataType", DataType.class)
+        List<DataType> result = entityManager.createQuery("FROM DataType ORDER BY name ASC", DataType.class)
                 .setFirstResult(pagination.offset())
                 .setMaxResults(pagination.getSize())
                 .getResultList();
-        long count = entityManager.createQuery("FROM DataType", Long.class)
+        long count = entityManager.createQuery("SELECT COUNT (id) FROM DataType ORDER BY name ASC", Long.class)
                 .getSingleResult();
         return new PageResponse<>(count, result, pagination);
     }

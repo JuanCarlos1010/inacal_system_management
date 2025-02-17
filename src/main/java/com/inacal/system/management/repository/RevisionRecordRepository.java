@@ -3,6 +3,7 @@ package com.inacal.system.management.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.persistence.NoResultException;
@@ -10,7 +11,6 @@ import jakarta.persistence.PersistenceContext;
 import com.inacal.management.model.Pagination;
 import com.inacal.management.db.BaseRepository;
 import com.inacal.management.model.PageResponse;
-import com.inacal.management.time.DateTimeHelper;
 import org.springframework.stereotype.Repository;
 import com.inacal.system.management.entity.RevisionRecord;
 
@@ -29,7 +29,7 @@ public class RevisionRecordRepository implements BaseRepository<RevisionRecord, 
     public boolean delete(List<String> ids) {
         int result = entityManager.createQuery("UPDATE FROM RevisionRecord SET deletedAt = :now WHERE id IN (:id)")
                 .setParameter("id", ids)
-                .setParameter("now", DateTimeHelper.now())
+                .setParameter("now", LocalDateTime.now())
                 .executeUpdate();
         return result > 0;
     }
@@ -37,7 +37,7 @@ public class RevisionRecordRepository implements BaseRepository<RevisionRecord, 
     @Override
     public Optional<RevisionRecord> findById(String id) {
         try {
-            RevisionRecord result = entityManager.createQuery("FROM RevisionRecord WHERE id = :id AND deletedAt IS NOT NULL", RevisionRecord.class)
+            RevisionRecord result = entityManager.createQuery("FROM RevisionRecord WHERE id = :id AND deletedAt IS NULL", RevisionRecord.class)
                     .setParameter("id", id)
                     .getSingleResult();
             return Optional.ofNullable(result);
@@ -63,11 +63,11 @@ public class RevisionRecordRepository implements BaseRepository<RevisionRecord, 
 
     @Override
     public PageResponse<RevisionRecord> findAll(Pagination pagination) {
-        List<RevisionRecord> result = entityManager.createQuery("FROM RevisionRecord WHERE deletedAt IS NULL", RevisionRecord.class)
+        List<RevisionRecord> result = entityManager.createQuery("FROM RevisionRecord WHERE deletedAt IS NULL ORDER BY createdAt ASC", RevisionRecord.class)
                 .setFirstResult(pagination.offset())
                 .setMaxResults(pagination.getSize())
                 .getResultList();
-        long count = entityManager.createQuery("FROM RevisionRecord WHERE deletedAt IS NULL", Long.class)
+        long count = entityManager.createQuery("SELECT COUNT (id) FROM RevisionRecord WHERE deletedAt IS NULL ORDER BY createdAt ASC", Long.class)
                 .getSingleResult();
         return new PageResponse<>(count, result, pagination);
     }

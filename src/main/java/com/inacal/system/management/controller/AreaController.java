@@ -18,9 +18,9 @@ public class AreaController {
     private final AreaService areaService;
     private final AreaMapper areaMapper;
 
-    public AreaController(AreaMapper areaMapper, AreaService areaService) {
-        this.areaMapper = areaMapper;
+    public AreaController(AreaService areaService, AreaMapper areaMapper) {
         this.areaService = areaService;
+        this.areaMapper = areaMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +29,7 @@ public class AreaController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<Area> pageResponse = areaService.findAllAreas(pagination);
-        List<AreaDto> dtoList = areaMapper.toDTOList(pageResponse.getResult());
+        List<AreaDto> dtoList = areaMapper.toDTO(pageResponse.getResult());
         PageResponse<AreaDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }

@@ -18,9 +18,9 @@ public class FormController {
     private final FormService formService;
     private final FormMapper formMapper;
 
-    public FormController(FormMapper formMapper, FormService formService) {
-        this.formMapper = formMapper;
+    public FormController(FormService formService, FormMapper formMapper) {
         this.formService = formService;
+        this.formMapper = formMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +29,7 @@ public class FormController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<Form> pageResponse = formService.findAllForms(pagination);
-        List<FormDto> dtoList = formMapper.toDTOList(pageResponse.getResult());
+        List<FormDto> dtoList = formMapper.toDTO(pageResponse.getResult());
         PageResponse<FormDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }

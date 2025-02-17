@@ -1,11 +1,17 @@
 package com.inacal.system.management.entity;
 
 import lombok.Data;
+import lombok.Builder;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "forms_field")
 public class FormField {
     @Id

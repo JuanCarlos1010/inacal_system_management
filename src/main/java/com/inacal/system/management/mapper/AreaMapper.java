@@ -1,14 +1,28 @@
 package com.inacal.system.management.mapper;
 
-import java.util.List;
-import org.mapstruct.Mapper;
 import com.inacal.system.management.dto.AreaDto;
 import com.inacal.system.management.entity.Area;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface AreaMapper {
-    AreaDto toDTO(Area entity);
-    Area toEntity(AreaDto dto);
-    List<AreaDto> toDTOList(List<Area> listEntity);
-    List<Area> toEntityList(List<AreaDto> ListDto);
+@Component
+public class AreaMapper extends AbstractMapper<Area, AreaDto> {
+    @Override
+    public AreaDto toDTO(Area entity) {
+        if (entity == null) return null;
+        return AreaDto.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .createdAt(entity.getCreatedAt())
+                .build();
+    }
+
+    @Override
+    public Area toEntity(AreaDto dto) {
+        if (dto == null) return null;
+        return Area.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .createdAt(dto.getCreatedAt())
+                .build();
+    }
 }

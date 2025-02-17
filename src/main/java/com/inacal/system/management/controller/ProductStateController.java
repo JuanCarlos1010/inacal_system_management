@@ -18,9 +18,9 @@ public class ProductStateController {
     private final ProductStateService productStateService;
     private final ProductStateMapper productStateMapper;
 
-    public ProductStateController(ProductStateMapper productStateMapper, ProductStateService productStateService) {
-        this.productStateMapper = productStateMapper;
+    public ProductStateController(ProductStateService productStateService, ProductStateMapper productStateMapper) {
         this.productStateService = productStateService;
+        this.productStateMapper = productStateMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +29,7 @@ public class ProductStateController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<ProductState> pageResponse = productStateService.findAllProductStates(pagination);
-        List<ProductStateDto> dtoList = productStateMapper.toDTOList(pageResponse.getResult());
+        List<ProductStateDto> dtoList = productStateMapper.toDTO(pageResponse.getResult());
         PageResponse<ProductStateDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }
@@ -42,13 +42,15 @@ public class ProductStateController {
 
     @PostMapping(path = "")
     public ResponseEntity<ProductStateDto> saveProductState(@RequestBody ProductStateDto body) {
-        ProductStateDto result = productStateMapper.toDTO(productStateService.saveProductState(productStateMapper.toEntity(body)));
+        ProductStateDto result = productStateMapper.toDTO(
+                productStateService.saveProductState(productStateMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping(path = "")
     public ResponseEntity<ProductStateDto> updateProductState(@RequestBody ProductStateDto body) {
-        ProductStateDto result = productStateMapper.toDTO(productStateService.updateProductState(productStateMapper.toEntity(body)));
+        ProductStateDto result = productStateMapper.toDTO(
+                productStateService.updateProductState(productStateMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

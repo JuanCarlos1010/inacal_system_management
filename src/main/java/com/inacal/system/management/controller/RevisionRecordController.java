@@ -18,9 +18,10 @@ public class RevisionRecordController {
     private final RevisionRecordService revisionRecordService;
     private final RevisionRecordMapper revisionRecordMapper;
 
-    public RevisionRecordController(RevisionRecordMapper revisionRecordMapper, RevisionRecordService revisionRecordService) {
-        this.revisionRecordMapper = revisionRecordMapper;
+    public RevisionRecordController(RevisionRecordService revisionRecordService,
+                                    RevisionRecordMapper revisionRecordMapper) {
         this.revisionRecordService = revisionRecordService;
+        this.revisionRecordMapper = revisionRecordMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +30,7 @@ public class RevisionRecordController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<RevisionRecord> pageResponse = revisionRecordService.findAllRevisionRecords(pagination);
-        List<RevisionRecordDto> dtoList = revisionRecordMapper.toDTOList(pageResponse.getResult());
+        List<RevisionRecordDto> dtoList = revisionRecordMapper.toDTO(pageResponse.getResult());
         PageResponse<RevisionRecordDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }
@@ -42,13 +43,15 @@ public class RevisionRecordController {
 
     @PostMapping(path = "")
     public ResponseEntity<RevisionRecordDto> saveRevisionRecord(@RequestBody RevisionRecordDto body) {
-        RevisionRecordDto result = revisionRecordMapper.toDTO(revisionRecordService.saveRevisionRecord(revisionRecordMapper.toEntity(body)));
+        RevisionRecordDto result = revisionRecordMapper.toDTO(
+                revisionRecordService.saveRevisionRecord(revisionRecordMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping(path = "")
     public ResponseEntity<RevisionRecordDto> updateRevisionRecord(@RequestBody RevisionRecordDto body) {
-        RevisionRecordDto result = revisionRecordMapper.toDTO(revisionRecordService.updateRevisionRecord(revisionRecordMapper.toEntity(body)));
+        RevisionRecordDto result = revisionRecordMapper.toDTO(
+                revisionRecordService.updateRevisionRecord(revisionRecordMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

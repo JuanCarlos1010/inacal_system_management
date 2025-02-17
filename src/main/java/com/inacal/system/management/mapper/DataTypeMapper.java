@@ -1,14 +1,26 @@
 package com.inacal.system.management.mapper;
 
-import java.util.List;
-import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 import com.inacal.system.management.dto.DataTypeDto;
 import com.inacal.system.management.entity.DataType;
 
-@Mapper(componentModel = "spring")
-public interface DataTypeMapper {
-    DataTypeDto toDTO(DataType entity);
-    DataType toEntity(DataTypeDto dto);
-    List<DataTypeDto> toDTOList(List<DataType> listEntity);
-    List<DataType> toEntityList(List<DataTypeDto> ListDto);
+@Component
+public class DataTypeMapper extends AbstractMapper<DataType, DataTypeDto> {
+    @Override
+    public DataTypeDto toDTO(DataType entity) {
+        if (entity == null) return null;
+        return DataTypeDto.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .build();
+    }
+
+    @Override
+    public DataType toEntity(DataTypeDto dto) {
+        if (dto == null) return null;
+        return DataType.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .build();
+    }
 }

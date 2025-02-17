@@ -18,9 +18,9 @@ public class ProductGroupController {
     private final ProductGroupService productGroupService;
     private final ProductGroupMapper productGroupMapper;
 
-    public ProductGroupController(ProductGroupMapper productGroupMapper, ProductGroupService productGroupService) {
-        this.productGroupMapper = productGroupMapper;
+    public ProductGroupController(ProductGroupService productGroupService, ProductGroupMapper productGroupMapper) {
         this.productGroupService = productGroupService;
+        this.productGroupMapper = productGroupMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +29,7 @@ public class ProductGroupController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<ProductGroup> pageResponse = productGroupService.findAllProductGroups(pagination);
-        List<ProductGroupDto> dtoList = productGroupMapper.toDTOList(pageResponse.getResult());
+        List<ProductGroupDto> dtoList = productGroupMapper.toDTO(pageResponse.getResult());
         PageResponse<ProductGroupDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }
@@ -42,13 +42,15 @@ public class ProductGroupController {
 
     @PostMapping(path = "")
     public ResponseEntity<ProductGroupDto> saveProductGroup(@RequestBody ProductGroupDto body) {
-        ProductGroupDto result = productGroupMapper.toDTO(productGroupService.saveProductGroup(productGroupMapper.toEntity(body)));
+        ProductGroupDto result = productGroupMapper.toDTO(
+                productGroupService.saveProductGroup(productGroupMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping(path = "")
     public ResponseEntity<ProductGroupDto> updateProductGroup(@RequestBody ProductGroupDto body) {
-        ProductGroupDto result = productGroupMapper.toDTO(productGroupService.updateProductGroup(productGroupMapper.toEntity(body)));
+        ProductGroupDto result = productGroupMapper.toDTO(
+                productGroupService.updateProductGroup(productGroupMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

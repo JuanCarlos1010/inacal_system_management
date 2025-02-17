@@ -1,15 +1,16 @@
 package com.inacal.system.management.service;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 import com.inacal.management.model.Pagination;
 import org.springframework.stereotype.Service;
 import com.inacal.management.model.PageResponse;
-import com.inacal.management.time.DateTimeHelper;
 import com.inacal.system.management.entity.FormGroup;
 import com.inacal.system.management.entity.ProductGroup;
 import com.inacal.management.exception.NotFoundException;
 import com.inacal.management.exception.BadRequestException;
 import com.inacal.management.exception.InternalServerException;
+import com.inacal.system.management.validator.ProductGroupValidator;
 import com.inacal.system.management.repository.ProductGroupRepository;
 
 @Service
@@ -42,6 +43,7 @@ public class ProductGroupService {
     public ProductGroup saveProductGroup(ProductGroup body) {
         try {
             body.setId(null);
+            ProductGroupValidator.validate(body);
             FormGroup formGroup = body.getFormGroup();
             if (formGroup == null) {
                 throw new BadRequestException("FormGroup is required");
@@ -52,7 +54,7 @@ public class ProductGroupService {
                 }
             }
             body.setFormGroup(formGroup);
-            body.setCreatedAt(DateTimeHelper.now());
+            body.setCreatedAt(LocalDateTime.now());
             return productGroupRepository.save(body);
         } catch (BadRequestException e) {
             throw e;
@@ -63,13 +65,13 @@ public class ProductGroupService {
 
     public ProductGroup updateProductGroup(ProductGroup body) {
         try {
-            body.setId(null);
+            ProductGroupValidator.validate(body);
             return productGroupRepository.findById(body.getId())
                     .map( productGroup -> {
                         productGroup.setName(body.getName());
                         productGroup.setSystemName(body.getSystemName());
-                        productGroup.setUpdatedAt(DateTimeHelper.now());
-                        return productGroupRepository.save(body);
+                        productGroup.setUpdatedAt(LocalDateTime.now());
+                        return productGroupRepository.save(productGroup);
                     })
                     .orElseThrow(() -> new NotFoundException("ProductGroup id does not exist"));
         } catch (BadRequestException | NotFoundException e) {
@@ -82,7 +84,7 @@ public class ProductGroupService {
     public boolean deleteProductGroup(String id) {
         try {
             ProductGroup productGroup = findProductGroupById(id);
-            productGroup.setDeletedAt(DateTimeHelper.now());
+            productGroup.setDeletedAt(LocalDateTime.now());
             productGroupRepository.save(productGroup);
             return true;
         } catch (Exception e) {

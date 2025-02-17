@@ -1,18 +1,17 @@
 package com.inacal.system.management.dto;
 
 import lombok.Data;
-import java.util.Date;
+import lombok.Builder;
 import java.time.LocalDateTime;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import com.inacal.system.management.entity.RegistrationDate;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class RevisionRecordDto {
     private String id;
-    private Date lastUpdate;
     private String preparedBy;
     private String preparedPosition;
     private String reviewedBy;
@@ -20,5 +19,5 @@ public class RevisionRecordDto {
     private String approvedBy;
     private String approvedPosition;
     private LocalDateTime createdAt;
-    private RegistrationDate registrationDate;
+    private String internalVersionId;
 }

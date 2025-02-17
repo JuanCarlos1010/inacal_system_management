@@ -1,14 +1,30 @@
 package com.inacal.system.management.mapper;
 
-import java.util.List;
-import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 import com.inacal.system.management.dto.ProductDto;
 import com.inacal.system.management.entity.Product;
 
-@Mapper(componentModel = "spring")
-public interface ProductMapper {
-    ProductDto toDTO(Product entity);
-    Product toEntity(ProductDto dto);
-    List<ProductDto> toDTOList(List<Product> listEntity);
-    List<Product> toEntityList(List<ProductDto> ListDto);
+@Component
+public class ProductMapper extends AbstractMapper<Product, ProductDto> {
+    @Override
+    public ProductDto toDTO(Product entity) {
+        if (entity == null) return null;
+        return ProductDto.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .systemName(entity.getSystemName())
+                .createdAt(entity.getCreatedAt())
+                .build();
+    }
+
+    @Override
+    public Product toEntity(ProductDto dto) {
+        if (dto == null) return null;
+        return Product.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .systemName(dto.getSystemName())
+                .createdAt(dto.getCreatedAt())
+                .build();
+    }
 }

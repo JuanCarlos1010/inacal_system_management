@@ -1,15 +1,16 @@
 package com.inacal.system.management.service;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import com.inacal.management.model.Pagination;
 import com.inacal.management.model.PageResponse;
 import com.inacal.system.management.entity.Area;
-import com.inacal.management.time.DateTimeHelper;
 import com.inacal.management.exception.NotFoundException;
-import com.inacal.management.exception.InternalServerException;
 import com.inacal.management.exception.BadRequestException;
+import com.inacal.system.management.validator.AreaValidator;
 import com.inacal.system.management.repository.AreaRepository;
+import com.inacal.management.exception.InternalServerException;
 
 @Service
 public class AreaService {
@@ -41,11 +42,12 @@ public class AreaService {
     public Area saveArea(Area body) {
         try {
             body.setId(null);
+            AreaValidator.validate(body);
             Optional<Area> existingArea = areaRepository.findByName(body.getName());
             if (existingArea.isPresent()) {
-                    throw new BadRequestException("Area name already exists");
+                throw new BadRequestException("Area name already exists");
             }
-            body.setCreatedAt(DateTimeHelper.now());
+            body.setCreatedAt(LocalDateTime.now());
             return areaRepository.save(body);
         } catch (BadRequestException e) {
             throw e;
@@ -56,12 +58,12 @@ public class AreaService {
 
     public Area updateArea(Area body) {
         try {
-            body.setId(null);
+            AreaValidator.validate(body);
             return areaRepository.findById(body.getId())
                     .map( area -> {
                         area.setName(body.getName());
-                        area.setUpdatedAt(DateTimeHelper.now());
-                        return areaRepository.save(body);
+                        area.setUpdatedAt(LocalDateTime.now());
+                        return areaRepository.save(area);
                     })
                     .orElseThrow(() -> new NotFoundException("Area id does not exist"));
         } catch (BadRequestException | NotFoundException e) {
@@ -74,7 +76,7 @@ public class AreaService {
     public boolean deleteArea(String id) {
         try {
             Area area = findAreaById(id);
-            area.setDeletedAt(DateTimeHelper.now());
+            area.setDeletedAt(LocalDateTime.now());
             areaRepository.save(area);
             return true;
         } catch (Exception e) {

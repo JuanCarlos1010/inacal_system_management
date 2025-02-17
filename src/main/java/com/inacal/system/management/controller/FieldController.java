@@ -18,9 +18,9 @@ public class FieldController {
     private final FieldService fieldService;
     private final FieldMapper fieldMapper;
 
-    public FieldController(FieldMapper fieldMapper, FieldService fieldService) {
-        this.fieldMapper = fieldMapper;
+    public FieldController(FieldService fieldService, FieldMapper fieldMapper) {
         this.fieldService = fieldService;
+        this.fieldMapper = fieldMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +29,7 @@ public class FieldController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<Field> pageResponse = fieldService.findAllFields(pagination);
-        List<FieldDto> dtoList = fieldMapper.toDTOList(pageResponse.getResult());
+        List<FieldDto> dtoList = fieldMapper.toDTO(pageResponse.getResult());
         PageResponse<FieldDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }

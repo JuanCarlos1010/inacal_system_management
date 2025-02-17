@@ -8,6 +8,7 @@ import com.inacal.system.management.entity.DataType;
 import com.inacal.management.exception.NotFoundException;
 import com.inacal.management.exception.BadRequestException;
 import com.inacal.management.exception.InternalServerException;
+import com.inacal.system.management.validator.DataTypeValidator;
 import com.inacal.system.management.repository.DataTypeRepository;
 
 @Service
@@ -40,6 +41,7 @@ public class DataTypeService {
     public DataType saveDataType(DataType body) {
         try {
             body.setId(null);
+            DataTypeValidator.validate(body);
             Optional<DataType> existingDataType = dataTypeRepository.findByName(body.getName());
             if (existingDataType.isPresent()) {
                 throw new BadRequestException("DataType name already exists");

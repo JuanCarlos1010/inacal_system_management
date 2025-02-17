@@ -3,6 +3,7 @@ package com.inacal.system.management.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.persistence.NoResultException;
@@ -11,7 +12,6 @@ import com.inacal.management.model.Pagination;
 import com.inacal.management.db.BaseRepository;
 import com.inacal.management.model.PageResponse;
 import org.springframework.stereotype.Repository;
-import com.inacal.management.time.DateTimeHelper;
 import com.inacal.system.management.entity.FormGroup;
 
 @Repository
@@ -29,7 +29,7 @@ public class FormGroupRepository implements BaseRepository<FormGroup, String> {
     public boolean delete(List<String> ids) {
         int result = entityManager.createQuery("UPDATE FROM FormGroup SET deletedAt = :now WHERE id IN (:id)")
                 .setParameter("id", ids)
-                .setParameter("now", DateTimeHelper.now())
+                .setParameter("now", LocalDateTime.now())
                 .executeUpdate();
         return result > 0;
     }
@@ -37,7 +37,7 @@ public class FormGroupRepository implements BaseRepository<FormGroup, String> {
     @Override
     public Optional<FormGroup> findById(String id) {
         try {
-            FormGroup result = entityManager.createQuery("FROM FormGroup WHERE id = :id AND deletedAt IS NOT NULL", FormGroup.class)
+            FormGroup result = entityManager.createQuery("FROM FormGroup WHERE id = :id AND deletedAt IS NULL", FormGroup.class)
                     .setParameter("id", id)
                     .getSingleResult();
             return Optional.ofNullable(result);
@@ -48,7 +48,7 @@ public class FormGroupRepository implements BaseRepository<FormGroup, String> {
 
     public Optional<FormGroup> findByName(String name) {
         try {
-            FormGroup result = entityManager.createQuery("FROM FormGroup WHERE name = :name AND deletedAt IS NOT NULL", FormGroup.class)
+            FormGroup result = entityManager.createQuery("FROM FormGroup WHERE name = :name AND deletedAt IS NULL", FormGroup.class)
                     .setParameter("name", name)
                     .getSingleResult();
             return Optional.ofNullable(result);
@@ -74,11 +74,11 @@ public class FormGroupRepository implements BaseRepository<FormGroup, String> {
 
     @Override
     public PageResponse<FormGroup> findAll(Pagination pagination) {
-        List<FormGroup> result = entityManager.createQuery("FROM FormGroup WHERE deletedAt IS NULL", FormGroup.class)
+        List<FormGroup> result = entityManager.createQuery("FROM FormGroup WHERE deletedAt IS NULL ORDER BY createdAt ASC", FormGroup.class)
                 .setFirstResult(pagination.offset())
                 .setMaxResults(pagination.getSize())
                 .getResultList();
-        long count = entityManager.createQuery("FROM FormGroup WHERE deletedAt IS NULL", Long.class)
+        long count = entityManager.createQuery("SELECT COUNT (id) FROM FormGroup WHERE deletedAt IS NULL ORDER BY createdAt ASC", Long.class)
                 .getSingleResult();
         return new PageResponse<>(count, result, pagination);
     }

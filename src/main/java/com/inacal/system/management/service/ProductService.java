@@ -1,13 +1,14 @@
 package com.inacal.system.management.service;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import com.inacal.management.model.Pagination;
 import com.inacal.management.model.PageResponse;
-import com.inacal.management.time.DateTimeHelper;
 import com.inacal.system.management.entity.Product;
 import com.inacal.management.exception.NotFoundException;
 import com.inacal.management.exception.BadRequestException;
+import com.inacal.system.management.validator.ProductValidator;
 import com.inacal.management.exception.InternalServerException;
 import com.inacal.system.management.repository.ProductRepository;
 
@@ -41,11 +42,12 @@ public class ProductService {
     public Product saveProduct(Product body) {
         try {
             body.setId(null);
+            ProductValidator.validate(body);
             Optional<Product> existingProduct = productRepository.findByName(body.getName());
             if (existingProduct.isPresent()) {
                 throw new BadRequestException("Product name already exists");
             }
-            body.setCreatedAt(DateTimeHelper.now());
+            body.setCreatedAt(LocalDateTime.now());
             return productRepository.save(body);
         } catch (BadRequestException e) {
             throw e;
@@ -56,13 +58,12 @@ public class ProductService {
 
     public Product updateProduct(Product body) {
         try {
-            body.setId(null);
             return productRepository.findById(body.getId())
-                    .map( productState -> {
-                        productState.setName(body.getName());
-                        productState.setSystemName(body.getSystemName());
-                        productState.setUpdatedAt(DateTimeHelper.now());
-                        return productRepository.save(body);
+                    .map( product -> {
+                        product.setName(body.getName());
+                        product.setSystemName(body.getSystemName());
+                        product.setUpdatedAt(LocalDateTime.now());
+                        return productRepository.save(product);
                     })
                     .orElseThrow(() -> new NotFoundException("Product id does not exist"));
         } catch (BadRequestException | NotFoundException e) {
@@ -75,7 +76,7 @@ public class ProductService {
     public boolean deleteProduct(String id) {
         try {
             Product product = findProductById(id);
-            product.setDeletedAt(DateTimeHelper.now());
+            product.setDeletedAt(LocalDateTime.now());
             productRepository.save(product);
             return true;
         } catch (Exception e) {

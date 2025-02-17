@@ -18,9 +18,9 @@ public class DataTypeController {
     private final DataTypeService dataTypeService;
     private final DataTypeMapper dataTypeMapper;
 
-    public DataTypeController(DataTypeMapper dataTypeMapper, DataTypeService dataTypeService) {
-        this.dataTypeMapper = dataTypeMapper;
+    public DataTypeController(DataTypeService dataTypeService, DataTypeMapper dataTypeMapper) {
         this.dataTypeService = dataTypeService;
+        this.dataTypeMapper = dataTypeMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +29,7 @@ public class DataTypeController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<DataType> pageResponse = dataTypeService.findAllDataTypes(pagination);
-        List<DataTypeDto> dtoList = dataTypeMapper.toDTOList(pageResponse.getResult());
+        List<DataTypeDto> dtoList = dataTypeMapper.toDTO(pageResponse.getResult());
         PageResponse<DataTypeDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }
@@ -42,7 +42,8 @@ public class DataTypeController {
 
     @PostMapping(path = "")
     public ResponseEntity<DataTypeDto> saveDataType(@RequestBody DataTypeDto body) {
-        DataTypeDto result = dataTypeMapper.toDTO(dataTypeService.saveDataType(dataTypeMapper.toEntity(body)));
+        DataTypeDto result = dataTypeMapper.toDTO(
+                dataTypeService.saveDataType(dataTypeMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 }

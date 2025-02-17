@@ -3,6 +3,7 @@ package com.inacal.system.management.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
 import jakarta.transaction.Transactional;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -10,34 +11,33 @@ import jakarta.persistence.PersistenceContext;
 import com.inacal.management.model.Pagination;
 import com.inacal.management.db.BaseRepository;
 import com.inacal.management.model.PageResponse;
-import com.inacal.management.time.DateTimeHelper;
 import org.springframework.stereotype.Repository;
-import com.inacal.system.management.entity.RegistrationDate;
+import com.inacal.system.management.entity.InternalVersion;
 
 @Repository
-public class RegistrationDateRepository implements BaseRepository<RegistrationDate, String> {
+public class InternalVersionRepository implements BaseRepository<InternalVersion, String> {
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     @Transactional
-    public RegistrationDate save(RegistrationDate body) {
+    public InternalVersion save(InternalVersion body) {
         return entityManager.merge(body);
     }
 
     @Override
     public boolean delete(List<String> ids) {
-        int result = entityManager.createQuery("UPDATE FROM RegistrationDate SET deletedAt = :now WHERE id IN (:id)")
+        int result = entityManager.createQuery("UPDATE FROM InternalVersion SET deletedAt = :now WHERE id IN (:id)")
                 .setParameter("id", ids)
-                .setParameter("now", DateTimeHelper.now())
+                .setParameter("now", LocalDateTime.now())
                 .executeUpdate();
         return result > 0;
     }
 
     @Override
-    public Optional<RegistrationDate> findById(String id) {
+    public Optional<InternalVersion> findById(String id) {
         try {
-            RegistrationDate result = entityManager.createQuery("FROM RegistrationDate WHERE id = :id AND deletedAt IS NOT NULL", RegistrationDate.class)
+            InternalVersion result = entityManager.createQuery("FROM InternalVersion WHERE id = :id AND deletedAt IS NULL", InternalVersion.class)
                     .setParameter("id", id)
                     .getSingleResult();
             return Optional.ofNullable(result);
@@ -48,10 +48,10 @@ public class RegistrationDateRepository implements BaseRepository<RegistrationDa
 
     @Override
     @Transactional
-    public List<RegistrationDate> saveAll(List<RegistrationDate> body) {
-        List<RegistrationDate> result = new ArrayList<>();
+    public List<InternalVersion> saveAll(List<InternalVersion> body) {
+        List<InternalVersion> result = new ArrayList<>();
         for ( int index = 0; index < body.size(); index++ ) {
-            RegistrationDate saved = entityManager.merge(body.get(index));
+            InternalVersion saved = entityManager.merge(body.get(index));
             result.add(saved);
             if (index % 5 == 0) {
                 entityManager.flush();
@@ -62,12 +62,12 @@ public class RegistrationDateRepository implements BaseRepository<RegistrationDa
     }
 
     @Override
-    public PageResponse<RegistrationDate> findAll(Pagination pagination) {
-        List<RegistrationDate> result = entityManager.createQuery("FROM RegistrationDate WHERE deletedAt IS NULL", RegistrationDate.class)
+    public PageResponse<InternalVersion> findAll(Pagination pagination) {
+        List<InternalVersion> result = entityManager.createQuery("FROM InternalVersion WHERE deletedAt IS NULL ORDER BY createdAt ASC", InternalVersion.class)
                 .setFirstResult(pagination.offset())
                 .setMaxResults(pagination.getSize())
                 .getResultList();
-        long count = entityManager.createQuery("FROM RegistrationDate WHERE deletedAt IS NULL", Long.class)
+        long count = entityManager.createQuery("SELECT COUNT (id) FROM InternalVersion WHERE deletedAt IS NULL ORDER BY createdAt ASC", Long.class)
                 .getSingleResult();
         return new PageResponse<>(count, result, pagination);
     }

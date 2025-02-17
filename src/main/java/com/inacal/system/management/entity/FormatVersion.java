@@ -1,12 +1,17 @@
 package com.inacal.system.management.entity;
 
 import lombok.Data;
-import java.util.Date;
+import lombok.Builder;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "format_versions")
 public class FormatVersion {
     @Id
@@ -17,9 +22,6 @@ public class FormatVersion {
     private String code;
     private double version;
 
-    @Column(name = "create_date")
-    private Date createDate;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -28,4 +30,8 @@ public class FormatVersion {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    public FormatVersion(String id) {
+        this.id = id;
+    }
 }

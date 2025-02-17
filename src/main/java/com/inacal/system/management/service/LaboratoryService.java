@@ -1,15 +1,16 @@
 package com.inacal.system.management.service;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import com.inacal.management.model.Pagination;
 import com.inacal.management.model.PageResponse;
 import com.inacal.system.management.entity.Area;
-import com.inacal.management.time.DateTimeHelper;
 import com.inacal.system.management.entity.Laboratory;
 import com.inacal.management.exception.NotFoundException;
 import com.inacal.management.exception.BadRequestException;
 import com.inacal.management.exception.InternalServerException;
+import com.inacal.system.management.validator.LaboratoryValidator;
 import com.inacal.system.management.repository.LaboratoryRepository;
 
 @Service
@@ -42,6 +43,7 @@ public class LaboratoryService {
     public Laboratory saveLaboratory(Laboratory body) {
         try {
             body.setId(null);
+            LaboratoryValidator.validate(body);
             Area area = body.getArea();
             if (area == null) {
                 throw new BadRequestException("Area is required");
@@ -52,7 +54,7 @@ public class LaboratoryService {
                 }
             }
             body.setArea(area);
-            body.setCreatedAt(DateTimeHelper.now());
+            body.setCreatedAt(LocalDateTime.now());
             return laboratoryRepository.save(body);
         } catch (BadRequestException e) {
             throw e;
@@ -63,15 +65,15 @@ public class LaboratoryService {
 
     public Laboratory updateLaboratory(Laboratory body) {
         try {
-            body.setId(null);
+            LaboratoryValidator.validate(body);
             return laboratoryRepository.findById(body.getId())
                     .map( laboratory -> {
                         laboratory.setName(body.getName());
                         laboratory.setCode(body.getCode());
                         laboratory.setDescription(body.getDescription());
                         laboratory.setActive(body.isActive());
-                        laboratory.setUpdatedAt(DateTimeHelper.now());
-                        return laboratoryRepository.save(body);
+                        laboratory.setUpdatedAt(LocalDateTime.now());
+                        return laboratoryRepository.save(laboratory);
                     })
                     .orElseThrow(() -> new NotFoundException("Laboratory id does not exist"));
         } catch (BadRequestException | NotFoundException e) {
@@ -84,7 +86,7 @@ public class LaboratoryService {
     public boolean deleteLaboratory(String id) {
         try {
             Laboratory laboratory = findLaboratoryById(id);
-            laboratory.setDeletedAt(DateTimeHelper.now());
+            laboratory.setDeletedAt(LocalDateTime.now());
             laboratoryRepository.save(laboratory);
             return true;
         } catch (Exception e) {

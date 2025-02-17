@@ -18,9 +18,9 @@ public class LaboratoryController {
     private final LaboratoryService laboratoryService;
     private final LaboratoryMapper laboratoryMapper;
 
-    public LaboratoryController(LaboratoryMapper laboratoryMapper, LaboratoryService laboratoryService) {
-        this.laboratoryMapper = laboratoryMapper;
+    public LaboratoryController(LaboratoryService laboratoryService, LaboratoryMapper laboratoryMapper) {
         this.laboratoryService = laboratoryService;
+        this.laboratoryMapper = laboratoryMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +29,7 @@ public class LaboratoryController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<Laboratory> pageResponse = laboratoryService.findAllLaboratories(pagination);
-        List<LaboratoryDto> dtoList = laboratoryMapper.toDTOList(pageResponse.getResult());
+        List<LaboratoryDto> dtoList = laboratoryMapper.toDTO(pageResponse.getResult());
         PageResponse<LaboratoryDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }
@@ -42,13 +42,15 @@ public class LaboratoryController {
 
     @PostMapping(path = "")
     public ResponseEntity<LaboratoryDto> saveLaboratory(@RequestBody LaboratoryDto body) {
-        LaboratoryDto result = laboratoryMapper.toDTO(laboratoryService.saveLaboratory(laboratoryMapper.toEntity(body)));
+        LaboratoryDto result = laboratoryMapper.toDTO(
+                laboratoryService.saveLaboratory(laboratoryMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping(path = "")
     public ResponseEntity<LaboratoryDto> updateLaboratory(@RequestBody LaboratoryDto body) {
-        LaboratoryDto result = laboratoryMapper.toDTO(laboratoryService.updateLaboratory(laboratoryMapper.toEntity(body)));
+        LaboratoryDto result = laboratoryMapper.toDTO(
+                laboratoryService.updateLaboratory(laboratoryMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

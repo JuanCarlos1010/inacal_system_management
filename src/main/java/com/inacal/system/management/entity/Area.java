@@ -1,12 +1,18 @@
 package com.inacal.system.management.entity;
 
 import lombok.Data;
+import lombok.Builder;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Entity
+@Builder
 @Table(name = "areas")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Area {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,4 +28,8 @@ public class Area {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    public Area(String areaId) {
+        this.id = areaId;
+    }
 }

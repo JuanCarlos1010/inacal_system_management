@@ -18,9 +18,9 @@ public class ProductController {
     private final ProductService productService;
     private final ProductMapper productMapper;
 
-    public ProductController(ProductMapper productMapper, ProductService productService) {
-        this.productMapper = productMapper;
+    public ProductController(ProductService productService, ProductMapper productMapper) {
         this.productService = productService;
+        this.productMapper = productMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +29,7 @@ public class ProductController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<Product> pageResponse = productService.findAllProducts(pagination);
-        List<ProductDto> dtoList = productMapper.toDTOList(pageResponse.getResult());
+        List<ProductDto> dtoList = productMapper.toDTO(pageResponse.getResult());
         PageResponse<ProductDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }
@@ -42,13 +42,15 @@ public class ProductController {
 
     @PostMapping(path = "")
     public ResponseEntity<ProductDto> saveProduct(@RequestBody ProductDto body) {
-        ProductDto result = productMapper.toDTO(productService.saveProduct(productMapper.toEntity(body)));
+        ProductDto result = productMapper.toDTO(
+                productService.saveProduct(productMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping(path = "")
     public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto body) {
-        ProductDto result = productMapper.toDTO(productService.updateProduct(productMapper.toEntity(body)));
+        ProductDto result = productMapper.toDTO(
+                productService.updateProduct(productMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

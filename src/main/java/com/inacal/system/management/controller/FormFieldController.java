@@ -18,9 +18,9 @@ public class FormFieldController {
     private final FormFieldService formFieldService;
     private final FormFieldMapper formFieldMapper;
 
-    public FormFieldController(FormFieldMapper formFieldMapper, FormFieldService formFieldService) {
-        this.formFieldMapper = formFieldMapper;
+    public FormFieldController(FormFieldService formFieldService, FormFieldMapper formFieldMapper) {
         this.formFieldService = formFieldService;
+        this.formFieldMapper = formFieldMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +29,7 @@ public class FormFieldController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<FormField> pageResponse = formFieldService.findAllFormsField(pagination);
-        List<FormFieldDto> dtoList = formFieldMapper.toDTOList(pageResponse.getResult());
+        List<FormFieldDto> dtoList = formFieldMapper.toDTO(pageResponse.getResult());
         PageResponse<FormFieldDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }
@@ -42,7 +42,8 @@ public class FormFieldController {
 
     @PostMapping(path = "")
     public ResponseEntity<FormFieldDto> saveFormField(@RequestBody FormFieldDto body) {
-        FormFieldDto result = formFieldMapper.toDTO(formFieldService.saveFormField(formFieldMapper.toEntity(body)));
+        FormFieldDto result = formFieldMapper.toDTO(
+                formFieldService.saveFormField(formFieldMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

@@ -18,9 +18,9 @@ public class FormGroupController {
     private final FormGroupService formGroupService;
     private final FormGroupMapper formGroupMapper;
 
-    public FormGroupController(FormGroupMapper formGroupMapper, FormGroupService formGroupService) {
-        this.formGroupMapper = formGroupMapper;
+    public FormGroupController(FormGroupService formGroupService, FormGroupMapper formGroupMapper) {
         this.formGroupService = formGroupService;
+        this.formGroupMapper = formGroupMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +29,7 @@ public class FormGroupController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<FormGroup> pageResponse = formGroupService.findAllFormGroups(pagination);
-        List<FormGroupDto> dtoList = formGroupMapper.toDTOList(pageResponse.getResult());
+        List<FormGroupDto> dtoList = formGroupMapper.toDTO(pageResponse.getResult());
         PageResponse<FormGroupDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }
@@ -42,13 +42,15 @@ public class FormGroupController {
 
     @PostMapping(path = "")
     public ResponseEntity<FormGroupDto> saveFormGroup(@RequestBody FormGroupDto body) {
-        FormGroupDto result = formGroupMapper.toDTO(formGroupService.saveFormGroup(formGroupMapper.toEntity(body)));
+        FormGroupDto result = formGroupMapper.toDTO(
+                formGroupService.saveFormGroup(formGroupMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping(path = "")
     public ResponseEntity<FormGroupDto> updateFormGroup(@RequestBody FormGroupDto body) {
-        FormGroupDto result = formGroupMapper.toDTO(formGroupService.updateFormGroup(formGroupMapper.toEntity(body)));
+        FormGroupDto result = formGroupMapper.toDTO(
+                formGroupService.updateFormGroup(formGroupMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

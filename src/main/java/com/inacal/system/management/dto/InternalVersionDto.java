@@ -1,19 +1,21 @@
 package com.inacal.system.management.dto;
 
 import lombok.Data;
-import java.util.Date;
+import lombok.Builder;
 import java.time.LocalDateTime;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import com.inacal.system.management.entity.FormatVersion;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationDateDto {
+public class InternalVersionDto {
     private String id;
     private double registerNumber;
-    private Date createDate;
     private LocalDateTime createdAt;
-    private FormatVersion formatVersion;
+    private String formatVersionId;
+    private String formatVersionTitle;
+    private String formatVersionCode;
+    private double formatVersionVersion;
 }

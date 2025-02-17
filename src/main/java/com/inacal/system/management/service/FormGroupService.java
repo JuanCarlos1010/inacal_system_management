@@ -1,11 +1,11 @@
 package com.inacal.system.management.service;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 import com.inacal.management.model.Pagination;
 import org.springframework.stereotype.Service;
 import com.inacal.management.model.PageResponse;
 import com.inacal.system.management.entity.Form;
-import com.inacal.management.time.DateTimeHelper;
 import com.inacal.system.management.entity.FormGroup;
 import com.inacal.management.exception.NotFoundException;
 import com.inacal.system.management.entity.FormatVersion;
@@ -55,7 +55,7 @@ public class FormGroupService {
             }
             body.setForm(form);
             body.setFormatVersion(formatVersion);
-            body.setCreatedAt(DateTimeHelper.now());
+            body.setCreatedAt(LocalDateTime.now());
             return formGroupRepository.save(body);
         } catch (BadRequestException e) {
             throw e;
@@ -66,13 +66,12 @@ public class FormGroupService {
 
     public FormGroup updateFormGroup(FormGroup body) {
         try {
-            body.setId(null);
             return formGroupRepository.findById(body.getId())
                     .map( formGroup -> {
                         formGroup.setName(body.getName());
                         formGroup.setDescription(body.getDescription());
-                        formGroup.setUpdatedAt(DateTimeHelper.now());
-                        return formGroupRepository.save(body);
+                        formGroup.setUpdatedAt(LocalDateTime.now());
+                        return formGroupRepository.save(formGroup);
                     })
                     .orElseThrow(() -> new NotFoundException("FormGroup id does not exist"));
         } catch (BadRequestException | NotFoundException e) {
@@ -85,7 +84,7 @@ public class FormGroupService {
     public boolean deleteFormGroup(String id) {
         try {
             FormGroup formGroup = findFormGroupById(id);
-            formGroup.setDeletedAt(DateTimeHelper.now());
+            formGroup.setDeletedAt(LocalDateTime.now());
             formGroupRepository.save(formGroup);
             return true;
         } catch (Exception e) {

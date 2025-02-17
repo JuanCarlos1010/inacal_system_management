@@ -1,23 +1,25 @@
 package com.inacal.system.management.entity;
 
 import lombok.Data;
-import java.util.Date;
+import lombok.Builder;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "registration_dates")
-public class RegistrationDate {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "internal_versions")
+public class InternalVersion {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @Column(name = "register_number")
     private double registerNumber;
-
-    @Column(name = "create_date")
-    private Date createDate;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -31,4 +33,8 @@ public class RegistrationDate {
     @OneToOne
     @JoinColumn(name = "format_version_id")
     private FormatVersion formatVersion;
+
+    public InternalVersion(String internalVersionId) {
+        this.id = internalVersionId;
+    }
 }

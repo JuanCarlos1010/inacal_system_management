@@ -1,14 +1,15 @@
 package com.inacal.system.management.service;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import com.inacal.management.model.Pagination;
 import com.inacal.management.model.PageResponse;
-import com.inacal.management.time.DateTimeHelper;
 import com.inacal.system.management.entity.Field;
 import com.inacal.system.management.entity.BusinessData;
 import com.inacal.management.exception.NotFoundException;
 import com.inacal.management.exception.BadRequestException;
+import com.inacal.system.management.validator.FieldValidator;
 import com.inacal.management.exception.InternalServerException;
 import com.inacal.system.management.repository.FieldRepository;
 
@@ -42,6 +43,7 @@ public class FieldService {
     public Field saveField(Field body) {
         try {
             body.setId(null);
+            FieldValidator.validate(body);
             BusinessData businessData = body.getBusinessData();
             if (businessData == null) {
                 throw new BadRequestException("BusinessData is required");
@@ -52,7 +54,7 @@ public class FieldService {
                 }
             }
             body.setBusinessData(businessData);
-            body.setCreatedAt(DateTimeHelper.now());
+            body.setCreatedAt(LocalDateTime.now());
             return fieldRepository.save(body);
         } catch (BadRequestException e) {
             throw e;
@@ -63,15 +65,15 @@ public class FieldService {
 
     public Field updateField(Field body) {
         try {
-            body.setId(null);
+            FieldValidator.validate(body);
             return fieldRepository.findById(body.getId())
                     .map( field -> {
                         field.setName(body.getName());
                         field.setLabel(body.getLabel());
                         field.setSystemName(body.getSystemName());
                         field.setProperties(body.getProperties());
-                        field.setUpdatedAt(DateTimeHelper.now());
-                        return fieldRepository.save(body);
+                        field.setUpdatedAt(LocalDateTime.now());
+                        return fieldRepository.save(field);
                     })
                     .orElseThrow(() -> new NotFoundException("Field id does not exist"));
         } catch (BadRequestException | NotFoundException e) {
@@ -84,7 +86,7 @@ public class FieldService {
     public boolean deleteField(String id) {
         try {
             Field field = findFieldById(id);
-            field.setDeletedAt(DateTimeHelper.now());
+            field.setDeletedAt(LocalDateTime.now());
             fieldRepository.save(field);
             return true;
         } catch (Exception e) {

@@ -18,9 +18,10 @@ public class FormatVersionController {
     private final FormatVersionService formatVersionService;
     private final FormatVersionMapper formatVersionMapper;
 
-    public FormatVersionController(FormatVersionMapper formatVersionMapper, FormatVersionService formatVersionService) {
-        this.formatVersionMapper = formatVersionMapper;
+    public FormatVersionController(FormatVersionService formatVersionService,
+                                   FormatVersionMapper formatVersionMapper) {
         this.formatVersionService = formatVersionService;
+        this.formatVersionMapper = formatVersionMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +30,7 @@ public class FormatVersionController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<FormatVersion> pageResponse = formatVersionService.findAllFormatVersions(pagination);
-        List<FormatVersionDto> dtoList = formatVersionMapper.toDTOList(pageResponse.getResult());
+        List<FormatVersionDto> dtoList = formatVersionMapper.toDTO(pageResponse.getResult());
         PageResponse<FormatVersionDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }
@@ -42,13 +43,15 @@ public class FormatVersionController {
 
     @PostMapping(path = "")
     public ResponseEntity<FormatVersionDto> saveFormatVersion(@RequestBody FormatVersionDto body) {
-        FormatVersionDto result = formatVersionMapper.toDTO(formatVersionService.saveFormatVersion(formatVersionMapper.toEntity(body)));
+        FormatVersionDto result = formatVersionMapper.toDTO(
+                formatVersionService.saveFormatVersion(formatVersionMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping(path = "")
     public ResponseEntity<FormatVersionDto> updateFormatVersion(@RequestBody FormatVersionDto body) {
-        FormatVersionDto result = formatVersionMapper.toDTO(formatVersionService.updateFormatVersion(formatVersionMapper.toEntity(body)));
+        FormatVersionDto result = formatVersionMapper.toDTO(
+                formatVersionService.updateFormatVersion(formatVersionMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

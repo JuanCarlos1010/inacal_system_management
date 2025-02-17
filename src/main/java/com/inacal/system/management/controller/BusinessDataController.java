@@ -18,9 +18,10 @@ public class BusinessDataController {
     private final BusinessDataService businessDataService;
     private final BusinessDataMapper businessDataMapper;
 
-    public BusinessDataController(BusinessDataMapper businessDataMapper, BusinessDataService businessDataService) {
-        this.businessDataMapper = businessDataMapper;
+    public BusinessDataController(BusinessDataService businessDataService,
+                                  BusinessDataMapper businessDataMapper) {
         this.businessDataService = businessDataService;
+        this.businessDataMapper = businessDataMapper;
     }
 
     @GetMapping(path = "")
@@ -29,7 +30,7 @@ public class BusinessDataController {
             @RequestParam(name = Env.DEFAULT_PAGE_SIZE, defaultValue = Env.DEFAULT_PAGE_SIZE) int size) {
         Pagination pagination = new Pagination(page, size);
         PageResponse<BusinessData> pageResponse = businessDataService.findAllBusinessData(pagination);
-        List<BusinessDataDto> dtoList = businessDataMapper.toDTOList(pageResponse.getResult());
+        List<BusinessDataDto> dtoList = businessDataMapper.toDTO(pageResponse.getResult());
         PageResponse<BusinessDataDto> result = new PageResponse<>(pageResponse.getCount(), dtoList, pagination);
         return ResponseEntity.ok(result);
     }
@@ -42,13 +43,15 @@ public class BusinessDataController {
 
     @PostMapping(path = "")
     public ResponseEntity<BusinessDataDto> saveBusinessData(@RequestBody BusinessDataDto body) {
-        BusinessDataDto result = businessDataMapper.toDTO(businessDataService.saveBusinessData(businessDataMapper.toEntity(body)));
+        BusinessDataDto result = businessDataMapper.toDTO(
+                businessDataService.saveBusinessData(businessDataMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping(path = "")
     public ResponseEntity<BusinessDataDto> updateBusinessData(@RequestBody BusinessDataDto body) {
-        BusinessDataDto result = businessDataMapper.toDTO(businessDataService.updateBusinessData(businessDataMapper.toEntity(body)));
+        BusinessDataDto result = businessDataMapper.toDTO(
+                businessDataService.updateBusinessData(businessDataMapper.toEntity(body)));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

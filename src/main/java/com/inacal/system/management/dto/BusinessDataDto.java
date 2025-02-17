@@ -1,12 +1,13 @@
 package com.inacal.system.management.dto;
 
 import lombok.Data;
+import lombok.Builder;
 import java.time.LocalDateTime;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import com.inacal.system.management.entity.DataType;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BusinessDataDto {
@@ -14,5 +15,5 @@ public class BusinessDataDto {
     private String name;
     private String systemName;
     private LocalDateTime createdAt;
-    private DataType dataType;
+    private String dataTypeId;
 }

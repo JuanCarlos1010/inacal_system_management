@@ -1,11 +1,17 @@
 package com.inacal.system.management.entity;
 
 import lombok.Data;
+import lombok.Builder;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "business_data")
 public class BusinessData {
     @Id
@@ -29,4 +35,8 @@ public class BusinessData {
     @OneToOne
     @JoinColumn(name = "data_type_id")
     private DataType dataType;
+
+    public BusinessData(String id) {
+        this.id = id;
+    }
 }

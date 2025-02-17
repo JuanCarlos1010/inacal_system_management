@@ -1,13 +1,13 @@
 package com.inacal.system.management.dto;
 
 import lombok.Data;
+import lombok.Builder;
 import java.time.LocalDateTime;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import com.inacal.system.management.entity.Form;
-import com.inacal.system.management.entity.FormatVersion;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class FormGroupDto {
@@ -15,6 +15,7 @@ public class FormGroupDto {
     private String name;
     private String description;
     private LocalDateTime createdAt;
-    private Form form;
-    private FormatVersion formatVersion;
+    private String formId;
+    private String formatVersionId;
+    private String formatVersionName;
 }
